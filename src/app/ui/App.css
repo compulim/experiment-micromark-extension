@@ -25,6 +25,7 @@
 
 .app__markdown-output {
   grid-area: markdown-output;
+  overflow: auto;
 }
 
 .app__title {

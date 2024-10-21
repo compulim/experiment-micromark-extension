@@ -11,7 +11,7 @@ const MarkdownOutputPanel = memo(({ className }: MarkdownOutputPanelProps) => {
   const [value] = useValue();
   const html = useMemo(() => Object.freeze({ __html: micromark(value) }), [value]);
 
-  return <pre className={classNames('markdown-output-panel', className)} dangerouslySetInnerHTML={html} />;
+  return <div className={classNames('markdown-output-panel', className)} dangerouslySetInnerHTML={html} />;
 });
 
 export default MarkdownOutputPanel;
