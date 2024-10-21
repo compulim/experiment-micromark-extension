@@ -1,0 +1,39 @@
+.app {
+  background: #f7f7f7;
+  box-sizing: border-box;
+  display: grid;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  gap: 8px;
+  /* grid-template-areas: 'title input tree-output' 'title markdown-output tree-output'; */
+  grid-template-areas: 'title title' 'input tree-output' 'markdown-output tree-output';
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr 1fr;
+  height: 100%;
+  padding: 8px;
+}
+
+.app__input,
+.app__markdown-output,
+.app__tree-output {
+  background: White;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.app__input {
+  grid-area: input;
+}
+
+.app__markdown-output {
+  grid-area: markdown-output;
+}
+
+.app__title {
+  font-weight: lighter;
+  grid-area: title;
+  margin: 0;
+}
+
+.app__tree-output {
+  grid-area: tree-output;
+  overflow: auto;
+}
