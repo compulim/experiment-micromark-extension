@@ -1,5 +1,7 @@
 import { micromark } from 'micromark';
-import { memo, useMemo, useState, type ReactNode } from 'react';
+import pluginsForHTML from 'prettier/plugins/html';
+import { format } from 'prettier/standalone.js';
+import { memo, useEffect, useMemo, useState, type ReactNode } from 'react';
 import sanitizeHTML from 'sanitize-html';
 
 import AppContext, { type AppContextType } from './private/AppContext';
@@ -49,18 +51,27 @@ The followings are not recognized as Markdown attributes and should left untouch
 `;
 
 const AppProvider = memo(({ children }: AppProviderProps) => {
+  const [html, setHTML] = useState<string>('');
   const [value, setValue] = useState<string>(SAMPLE_VALUE);
   const [shouldSanitize, setShouldSanitize] = useState<boolean>(true);
 
-  const html = useMemo(() => {
-    let html = micromark(value, { allowDangerousHtml: true });
+  useEffect(() => {
+    const abortController = new AbortController();
 
-    if (shouldSanitize) {
-      html = sanitizeHTML(html);
-    }
+    (async signal => {
+      let html = micromark(value, { allowDangerousHtml: true });
 
-    return html;
-  }, [shouldSanitize, value]);
+      if (shouldSanitize) {
+        html = sanitizeHTML(html);
+      }
+
+      html = await format(html, { parser: 'html', plugins: [pluginsForHTML] });
+
+      signal.aborted || setHTML(html);
+    })(abortController.signal);
+
+    return () => abortController.abort();
+  }, [setHTML, shouldSanitize, value]);
 
   const context = useMemo<AppContextType>(
     () => Object.freeze({ html, setShouldSanitize, setValue, shouldSanitize, value }),

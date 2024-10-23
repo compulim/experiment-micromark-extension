@@ -20,6 +20,7 @@
     "classnames": "^2.5.1",
     "mdast-util-from-markdown": "^2.0.1",
     "micromark": "^4.0.0",
+    "prettier": "^3.3.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "sanitize-html": "^2.13.1"
