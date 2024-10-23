@@ -1,4 +1,6 @@
+import { micromark } from 'micromark';
 import { memo, useMemo, useState, type ReactNode } from 'react';
+import sanitizeHTML from 'sanitize-html';
 
 import AppContext, { type AppContextType } from './private/AppContext';
 
@@ -48,8 +50,22 @@ The followings are not recognized as Markdown attributes and should left untouch
 
 const AppProvider = memo(({ children }: AppProviderProps) => {
   const [value, setValue] = useState<string>(SAMPLE_VALUE);
+  const [shouldSanitize, setShouldSanitize] = useState<boolean>(true);
 
-  const context = useMemo<AppContextType>(() => Object.freeze({ setValue, value }), [setValue, value]);
+  const html = useMemo(() => {
+    let html = micromark(value, { allowDangerousHtml: true });
+
+    if (shouldSanitize) {
+      html = sanitizeHTML(html);
+    }
+
+    return html;
+  }, [shouldSanitize, value]);
+
+  const context = useMemo<AppContextType>(
+    () => Object.freeze({ html, setShouldSanitize, setValue, shouldSanitize, value }),
+    [html, setShouldSanitize, setValue, shouldSanitize, value]
+  );
 
   return <AppContext.Provider value={context}>{children}</AppContext.Provider>;
 });

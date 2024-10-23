@@ -1,17 +1,18 @@
 import './MarkdownOutputPanel.css';
 
 import classNames from 'classnames';
-import { micromark } from 'micromark';
 import { memo, useMemo } from 'react';
-import useValue from '../data/useValue';
+import useHTML from '../data/useHTML';
 
 type MarkdownOutputPanelProps = { className?: string | undefined };
 
 const MarkdownOutputPanel = memo(({ className }: MarkdownOutputPanelProps) => {
-  const [value] = useValue();
-  const html = useMemo(() => Object.freeze({ __html: micromark(value) }), [value]);
+  const [html] = useHTML();
+  const dangerouslySetInnerHTML = useMemo<Readonly<{ __html: string }>>(() => Object.freeze({ __html: html }), [html]);
 
-  return <div className={classNames('markdown-output-panel', className)} dangerouslySetInnerHTML={html} />;
+  return (
+    <div className={classNames('markdown-output-panel', className)} dangerouslySetInnerHTML={dangerouslySetInnerHTML} />
+  );
 });
 
 export default MarkdownOutputPanel;
