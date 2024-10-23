@@ -20,7 +20,7 @@ const TreeOutputPanel = memo(({ className }: TreeOutputPanelProps) => {
     }
   }, [value]);
 
-  return <pre className={classNames('tree-output-panel', className)}>{tree}</pre>;
+  return <textarea className={classNames('tree-output-panel', className)} readOnly={true}>{tree}</textarea>;
 });
 
 export default TreeOutputPanel;

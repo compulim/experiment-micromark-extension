@@ -4,14 +4,14 @@
   display: grid;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   gap: 8px;
-  grid-template-areas: 'title title' 'input tree-output' 'markdown-output html-output';
+  grid-template-areas: 'title title' 'input tree-output' 'markdown-output dom-output';
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto 1fr 1fr;
   height: 100%;
   padding: 8px;
 }
 
-.app__html-output,
+.app__dom-output,
 .app__input,
 .app__markdown-output,
 .app__tree-output {
@@ -19,8 +19,8 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
-.app__html-output {
-  grid-area: html-output;
+.app__dom-output {
+  grid-area: dom-output;
   overflow: auto;
 }
 
@@ -34,9 +34,14 @@
 }
 
 .app__title {
+  align-items: center;
   display: flex;
-  font-weight: lighter;
   grid-area: title;
+  justify-content: space-between;
+}
+
+.app__title .app__title__header {
+  font-weight: lighter;
   margin: 0;
 }
 
