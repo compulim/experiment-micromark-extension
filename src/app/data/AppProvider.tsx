@@ -1,10 +1,11 @@
+import MarkdownIt from 'markdown-it';
 import { micromark } from 'micromark';
 import pluginsForHTML from 'prettier/plugins/html';
 import { format } from 'prettier/standalone.js';
 import { memo, useEffect, useMemo, useState, type ReactNode } from 'react';
 import sanitizeHTML from 'sanitize-html';
 
-import AppContext, { type AppContextType } from './private/AppContext';
+import AppContext, { type AppContextType, type SupportedMarkdownEngine } from './private/AppContext';
 
 type AppProviderProps = Readonly<{
   children?: ReactNode | undefined;
@@ -54,28 +55,41 @@ const AppProvider = memo(({ children }: AppProviderProps) => {
   const [html, setHTML] = useState<string>('');
   const [value, setValue] = useState<string>(SAMPLE_VALUE);
   const [shouldSanitize, setShouldSanitize] = useState<boolean>(true);
+  const [markdownEngine, setMarkdownEngine] = useState<SupportedMarkdownEngine>('micromark');
 
   useEffect(() => {
     const abortController = new AbortController();
 
     (async signal => {
-      let html = micromark(value, { allowDangerousHtml: true });
+      let html: string;
+
+      if (markdownEngine === 'markdown-it') {
+        html = new MarkdownIt({ html: true }).render(`This is done by \`markdown-it\`.\n\n${value}`);
+      } else {
+        markdownEngine satisfies 'micromark';
+        html = micromark(`This is done by \`micromark\`.\n\n${value}`, { allowDangerousHtml: true });
+      }
 
       if (shouldSanitize) {
         html = sanitizeHTML(html);
       }
 
-      html = await format(html, { parser: 'html', plugins: [pluginsForHTML] });
+      try {
+        html = await format(html, { parser: 'html', plugins: [pluginsForHTML] });
+      } catch {
+        // Failed to parse and prettify HTML probably because it is invalid. Ignore it.
+      }
 
       signal.aborted || setHTML(html);
     })(abortController.signal);
 
     return () => abortController.abort();
-  }, [setHTML, shouldSanitize, value]);
+  }, [markdownEngine, setHTML, shouldSanitize, value]);
 
   const context = useMemo<AppContextType>(
-    () => Object.freeze({ html, setShouldSanitize, setValue, shouldSanitize, value }),
-    [html, setShouldSanitize, setValue, shouldSanitize, value]
+    () =>
+      Object.freeze({ html, markdownEngine, setMarkdownEngine, setShouldSanitize, setValue, shouldSanitize, value }),
+    [html, markdownEngine, setMarkdownEngine, setShouldSanitize, setValue, shouldSanitize, value]
   );
 
   return <AppContext.Provider value={context}>{children}</AppContext.Provider>;

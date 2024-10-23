@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "classnames": "^2.5.1",
+    "markdown-it": "^14.1.0",
     "mdast-util-from-markdown": "^2.0.1",
     "micromark": "^4.0.0",
     "prettier": "^3.3.3",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "@tsconfig/strictest": "^2.0.5",
+    "@types/markdown-it": "^14.1.2",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "@types/sanitize-html": "^2.13.0",
