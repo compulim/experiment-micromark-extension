@@ -54,8 +54,13 @@ export default memo(function App() {
               <code>micromark</code>
             </label>
             <label>
-              <input checked={shouldEnableGFM} onChange={handleShouldEnableGFMChange} type="checkbox" />
-              GitHub for Markdown
+              <input
+                checked={shouldEnableGFM}
+                disabled={markdownEngine !== 'micromark'}
+                onChange={handleShouldEnableGFMChange}
+                type="checkbox"
+              />
+              GitHub-flavored Markdown
             </label>
             <label>
               <input checked={shouldSanitize} onChange={handleShouldSanitizeChange} type="checkbox" />
