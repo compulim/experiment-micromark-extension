@@ -74,7 +74,7 @@ export default memo(function App() {
             </label>
             <label>
               <input checked={shouldSanitize} onChange={handleShouldSanitizeChange} type="checkbox" />
-              Sanitize
+              <code>sanitize-html</code>
             </label>
           </div>
         </div>
