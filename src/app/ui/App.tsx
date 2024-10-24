@@ -2,6 +2,7 @@ import './App.css';
 
 import { Fragment, memo, useCallback, type FormEventHandler } from 'react';
 import useMarkdownEngine from '../data/useMarkdownEngine';
+import useShouldEnableGFM from '../data/useShouldEnableGFM';
 import useShouldSanitize from '../data/useShouldSanitize';
 import DOMOutputPanel from './DOMOutputPanel';
 import InputPanel from './InputPanel';
@@ -10,6 +11,7 @@ import TreeOutputPanel from './TreeOutputPanel';
 
 export default memo(function App() {
   const [markdownEngine, setMarkdownEngine] = useMarkdownEngine();
+  const [shouldEnableGFM, setShouldEnableGFM] = useShouldEnableGFM();
   const [shouldSanitize, setShouldSanitize] = useShouldSanitize();
 
   const handleMarkdownEngineChange = useCallback<FormEventHandler<HTMLInputElement>>(
@@ -17,7 +19,12 @@ export default memo(function App() {
     [setMarkdownEngine]
   );
 
-  const handleShouldSanitizeInput = useCallback<FormEventHandler<HTMLInputElement>>(
+  const handleShouldEnableGFMChange = useCallback<FormEventHandler<HTMLInputElement>>(
+    ({ currentTarget: { checked } }) => setShouldEnableGFM(checked),
+    [setShouldEnableGFM]
+  );
+
+  const handleShouldSanitizeChange = useCallback<FormEventHandler<HTMLInputElement>>(
     ({ currentTarget: { checked } }) => setShouldSanitize(checked),
     [setShouldSanitize]
   );
@@ -47,7 +54,11 @@ export default memo(function App() {
               <code>micromark</code>
             </label>
             <label>
-              <input checked={shouldSanitize} onChange={handleShouldSanitizeInput} type="checkbox" />
+              <input checked={shouldEnableGFM} onChange={handleShouldEnableGFMChange} type="checkbox" />
+              GitHub for Markdown
+            </label>
+            <label>
+              <input checked={shouldSanitize} onChange={handleShouldSanitizeChange} type="checkbox" />
               Sanitize
             </label>
           </div>

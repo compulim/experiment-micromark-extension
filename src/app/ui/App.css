@@ -45,6 +45,11 @@
   margin: 0;
 }
 
+.app__title .app__title__button-bar {
+  display: flex;
+  gap: 8px;
+}
+
 .app__tree-output {
   grid-area: tree-output;
   overflow: auto;

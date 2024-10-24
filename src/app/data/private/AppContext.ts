@@ -6,8 +6,10 @@ export type AppContextType = Readonly<{
   html: string;
   markdownEngine: SupportedMarkdownEngine;
   setMarkdownEngine: Dispatch<SetStateAction<SupportedMarkdownEngine>>;
+  setShouldEnableGFM: Dispatch<SetStateAction<boolean>>;
   setShouldSanitize: Dispatch<SetStateAction<boolean>>;
   setValue: Dispatch<SetStateAction<string>>;
+  shouldEnableGFM: boolean;
   shouldSanitize: boolean;
   value: string;
 }>;
