@@ -1,26 +1,14 @@
 import './TreeOutputPanel.css';
 
 import classNames from 'classnames';
-import { memo, useMemo } from 'react';
+import { memo } from 'react';
 
-import { fromMarkdown } from 'mdast-util-from-markdown';
-
-import useValue from '../data/useValue';
+import useAST from '../data/useAST';
 
 export type TreeOutputPanelProps = { className?: string | undefined };
 
-const TreeOutputPanel = memo(({ className }: TreeOutputPanelProps) => {
-  const [value] = useValue();
-
-  const tree = useMemo(() => {
-    try {
-      return JSON.stringify(fromMarkdown(value), null, 2);
-    } catch {
-      return '<Failed to parse Markdown>';
-    }
-  }, [value]);
-
-  return <textarea className={classNames('tree-output-panel', className)} readOnly={true} value={tree} />;
-});
+const TreeOutputPanel = memo(({ className }: TreeOutputPanelProps) => (
+  <textarea className={classNames('tree-output-panel', className)} readOnly={true} value={useAST()[0]} />
+));
 
 export default TreeOutputPanel;

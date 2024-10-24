@@ -1,6 +1,7 @@
 import { HtmlRenderer as CommonMarkHTMLRenderer, Parser as CommonMarkParser } from 'commonmark';
 import MarkdownIt from 'markdown-it';
-import { micromark } from 'micromark';
+import { fromMarkdown } from 'mdast-util-from-markdown';
+import { micromark, type Options as MicromarkOptions } from 'micromark';
 import { gfm, gfmHtml } from 'micromark-extension-gfm';
 import pluginsForHTML from 'prettier/plugins/html';
 import { format } from 'prettier/standalone.js';
@@ -95,8 +96,9 @@ const SAMPLE_VALUE_2 = `## Header
 </ul>`;
 
 const AppProvider = memo(({ children }: AppProviderProps) => {
+  const [ast, setAST] = useState<string>('');
   const [html, setHTML] = useState<string>('');
-  const [value, setValue] = useState<string>(SAMPLE_VALUE);
+  const [value, setValue] = useState<string>(SAMPLE_VALUE_2);
   const [shouldEnableGFM, setShouldEnableGFM] = useState<boolean>(true);
   const [shouldSanitize, setShouldSanitize] = useState<boolean>(true);
   const [markdownEngine, setMarkdownEngine] = useState<SupportedMarkdownEngine>('micromark');
@@ -112,16 +114,27 @@ const AppProvider = memo(({ children }: AppProviderProps) => {
         const writer = new CommonMarkHTMLRenderer();
         const parsed = reader.parse(value);
 
+        console.log('CommonMark AST', parsed);
+
+        setAST('<See console>');
         html = writer.render(parsed);
       } else if (markdownEngine === 'markdown-it') {
-        html = new MarkdownIt({ html: true }).render(value);
+        const markdownIt = new MarkdownIt({ html: true });
+
+        setAST(JSON.stringify(markdownIt.parse(value, {}), null, 2));
+
+        html = markdownIt.render(value);
       } else {
         markdownEngine satisfies 'micromark';
 
-        html = micromark(value, {
+        const options: MicromarkOptions = {
           allowDangerousHtml: true,
           ...(shouldEnableGFM ? { extensions: [gfm()], htmlExtensions: [gfmHtml()] } : {})
-        });
+        };
+
+        setAST(JSON.stringify(fromMarkdown(value, options), null, 2));
+
+        html = micromark(value, options);
       }
 
       if (shouldSanitize) {
@@ -138,11 +151,12 @@ const AppProvider = memo(({ children }: AppProviderProps) => {
     })(abortController.signal);
 
     return () => abortController.abort();
-  }, [markdownEngine, setHTML, shouldEnableGFM, shouldSanitize, value]);
+  }, [markdownEngine, setAST, setHTML, shouldEnableGFM, shouldSanitize, value]);
 
   const context = useMemo<AppContextType>(
     () =>
       Object.freeze({
+        ast,
         html,
         markdownEngine,
         setMarkdownEngine,
@@ -154,6 +168,7 @@ const AppProvider = memo(({ children }: AppProviderProps) => {
         value
       }),
     [
+      ast,
       html,
       markdownEngine,
       setMarkdownEngine,

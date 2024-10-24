@@ -3,6 +3,7 @@ import { createContext, type Dispatch, type SetStateAction } from 'react';
 export type SupportedMarkdownEngine = 'commonmark' | 'markdown-it' | 'micromark';
 
 export type AppContextType = Readonly<{
+  ast: string;
   html: string;
   markdownEngine: SupportedMarkdownEngine;
   setMarkdownEngine: Dispatch<SetStateAction<SupportedMarkdownEngine>>;
