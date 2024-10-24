@@ -1,6 +1,6 @@
 import { createContext, type Dispatch, type SetStateAction } from 'react';
 
-export type SupportedMarkdownEngine = 'markdown-it' | 'micromark';
+export type SupportedMarkdownEngine = 'commonmark' | 'markdown-it' | 'micromark';
 
 export type AppContextType = Readonly<{
   html: string;

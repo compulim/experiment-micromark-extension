@@ -15,7 +15,8 @@ export default memo(function App() {
   const [shouldSanitize, setShouldSanitize] = useShouldSanitize();
 
   const handleMarkdownEngineChange = useCallback<FormEventHandler<HTMLInputElement>>(
-    ({ currentTarget: { value } }) => setMarkdownEngine(value === 'markdown-it' ? value : 'micromark'),
+    ({ currentTarget: { value } }) =>
+      setMarkdownEngine(value === 'commonmark' || value === 'markdown-it' ? value : 'micromark'),
     [setMarkdownEngine]
   );
 
@@ -35,6 +36,15 @@ export default memo(function App() {
         <div className="app__title">
           <h1 className="app__title__header">micromark demo</h1>
           <div className="app__title__button-bar">
+            <label>
+              <input
+                checked={markdownEngine === 'commonmark'}
+                onClick={handleMarkdownEngineChange}
+                type="radio"
+                value="commonmark"
+              />
+              <code>CommonMark</code>
+            </label>
             <label>
               <input
                 checked={markdownEngine === 'markdown-it'}

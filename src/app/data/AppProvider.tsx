@@ -1,3 +1,4 @@
+import { HtmlRenderer as CommonMarkHTMLRenderer, Parser as CommonMarkParser } from 'commonmark';
 import MarkdownIt from 'markdown-it';
 import { micromark } from 'micromark';
 import { gfm, gfmHtml } from 'micromark-extension-gfm';
@@ -95,7 +96,7 @@ const SAMPLE_VALUE_2 = `## Header
 
 const AppProvider = memo(({ children }: AppProviderProps) => {
   const [html, setHTML] = useState<string>('');
-  const [value, setValue] = useState<string>(SAMPLE_VALUE_2);
+  const [value, setValue] = useState<string>(SAMPLE_VALUE);
   const [shouldEnableGFM, setShouldEnableGFM] = useState<boolean>(true);
   const [shouldSanitize, setShouldSanitize] = useState<boolean>(true);
   const [markdownEngine, setMarkdownEngine] = useState<SupportedMarkdownEngine>('micromark');
@@ -106,19 +107,20 @@ const AppProvider = memo(({ children }: AppProviderProps) => {
     (async signal => {
       let html: string;
 
-      if (markdownEngine === 'markdown-it') {
-        html = new MarkdownIt({ html: true }).render(`This is done by \`markdown-it\`.\n\n${value}`);
+      if (markdownEngine === 'commonmark') {
+        const reader = new CommonMarkParser();
+        const writer = new CommonMarkHTMLRenderer();
+        const parsed = reader.parse(value);
+
+        html = writer.render(parsed);
+      } else if (markdownEngine === 'markdown-it') {
+        html = new MarkdownIt({ html: true }).render(value);
       } else {
         markdownEngine satisfies 'micromark';
 
-        html = micromark(`This is done by \`micromark\`.\n\n${value}`, {
+        html = micromark(value, {
           allowDangerousHtml: true,
-          ...(shouldEnableGFM
-            ? {
-                extensions: [gfm()],
-                htmlExtensions: [gfmHtml()]
-              }
-            : {})
+          ...(shouldEnableGFM ? { extensions: [gfm()], htmlExtensions: [gfmHtml()] } : {})
         });
       }
 
